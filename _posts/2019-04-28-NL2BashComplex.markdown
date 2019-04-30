@@ -6,13 +6,13 @@ authors: "Changlin Zhang, Chenguang Hong, Chiyu Song, Wei-Lun Hsiao, Xingyu Wei"
 
 # Introduction
 
-Shell scripting is an essential skill for many PC users and server maintainers. [Someone](http://www.catb.org/~esr/writings/unix-koans/ten-thousand.html) may argue that one line of bash script could beat ten thousand lines of C codes. However, learning shell scripts could be painful. Although the name of the utilities is easy to understand, it is difficult to memorize all the way to use the flags and arguments for each utility. There is [a GitHub project](https://github.com/nvbn/thefuck) that helps the users to correct the previously failed command. Nonetheless, this project is rule-based, and its performance could be not satisfied when the script is too long. Users still need a lot of time to construct correct bash commands, even if they are similar to what they typed yesterday. 
+Shell scripting is an essential skill for many PC users and server maintainers. However, learning shell scripts could be painful. Although the name of the utilities is easy to understand, it is difficult to memorize all the way to use the flags and arguments for each utility. There is [a GitHub project](https://github.com/nvbn/thefuck) that helps the users to correct the previously failed command. Nonetheless, this project is rule-based, and its performance cannot be satisfied when the script is too long. Users still need a lot of time to construct correct bash commands, even if they are similar to what they typed yesterday. 
 
-In this project, we worked on the problem converting descriptions in natural language into shell commands in bash. Our goal is to extend the state-of-the-art baseline model to output commands with complex structures and achieve better performance.
+In this project, we worked on the problem converting descriptions in natural language into shell commands in bash. Our goal is to extend the state-of-the-art baseline model to output commands with complex structures and achieve better performance. We achieve it by specifying pretrained word-embedding model and adding TypeSelector structure.
 
 # From Natural Language to Bash Scripts
 
-The problem we are going to solve is like machine translation: given a task description $X$ as the input, we would like to synthesis the correspondent program, $P$, in bash script that is executable and able to fulfill the task. 
+The problem we are going to solve is like machine translation: given a task description $X$ as the input, we synthesis the correspondent program, $P$, in bash script that is executable and able to fulfill the task. 
 
 <center><em>Illustration of an example in the dataset</em></center>
 
@@ -80,7 +80,7 @@ We also tried to modify a general text-to-code model, [TRANX](https://github.com
 
 # Yet Another Step to Improve: Add Semantic Loss
 
-The intuition to try to add semantic loss is inspired by [Variational Autoencoder(VAE)](https://arxiv.org/abs/1312.6114). VAE adds an additional latent loss to constrain the model’s latent variables’ distribution. It makes us consider adding a regularization item. [Semantic loss](http://web.cs.ucla.edu/~guyvdb/papers/XuICML18.pdf) is a good possible add-on. Its design intention is to capture logical constraints and structured predictions, like one-hot constraint when encoding in addition to standard sigmoid cross entropy. Semantic Loss can be formualated as the following.
+The intuition to try to add semantic loss is inspired by [Variational Autoencoder(VAE)](https://arxiv.org/abs/1312.6114). VAE adds an additional latent loss to constrain the model’s latent variables’ distribution. It makes us consider adding a regularization item. [Semantic loss](http://web.cs.ucla.edu/~guyvdb/papers/XuICML18.pdf) is a good possible add-on. Its design intention is to capture logical constraints and structured predictions, like one-hot constraint when encoding in addition to standard sigmoid cross entropy. Semantic loss can be formualated as the following.
 
 $$L^s (\alpha, \mathbf{p}) \propto - \log \sum_{x \models \alpha} \prod_{i: \mathbf{x} \models X_i} p_i \prod_{i: x \models \neg X_i} (1 - p_i)$$
 
@@ -120,10 +120,10 @@ The following tables show the evaluation results for two values on two test sets
 
 In this result, we find that TypeSelector improves the performance of the model in both the test-set mixing simple commands and complex commands and the one with complex commands only. The model using pre-trained dictionary has better performace than the baseline model in the complex-commands test set but failed to achieve better performance in the original test set. 
 
-Meanwhile, the experiment results also show that adding semantic loss hurts the performance a little bit. Thus, we do not combine this method to the final-stage model. The results also agree with the orignial paper that semantic loss is more suitable for the semi-supervised scene and is not good at the full-supervised scene since semantic loss may combat the standard sigmoid cross entropy loss.
+Meanwhile, the experiment results also show that adding semantic loss hurts the performance a little bit. Thus, we do not combine this method to the final-stage model. The results also agree with the orignial paper that semantic loss is more suitable for the semi-supervised scene and is not good at the full-supervised scene since semantic loss combat the standard sigmoid cross entropy loss.
 
 # Error Analysis
-We also analysis the prediction from the results of our approaches to finding whether our model has better performance in generating complex commands. We selected some typical results to demonstrate the comparison between the baseline model and the output from the best model. 
+We also analyze the prediction from the results of our approaches to finding whether our model has better performance in generating complex commands. We selected some typical results to demonstrate the comparison between the baseline model and the output from the best model. 
 
 Firstly, the following table shows the model predictions over the task we mentioned in the section of the baseline model. In this example, we see that all three predictions from the baseline failed to output a prediction that having the correct results. However, in the model using TypeSelector, all three predictions use pipeline and figure out to filter out the correct candidates by calling `grep`.
 
@@ -212,7 +212,11 @@ tail -n +2 123456789 | head - 2
 
 # Next step to take
 
-In this work, we find that using a simple classifier to deal with simple commands and complex commands could help improve the result of the prediction. Also, the improvement can be observed in both the overall test set and the complex command test sets. We are planning to find whether we could introduce more complicated model so that the predictor can support more kind of structures that involving control flows, like loop or conditions.
+In conclusion, our contributions are: 
+1. collecting corpus to customize pre-trained embedding model,
+2. adding typer-selector to enable model to predict complex structure.
+
+We find that using a simple classifier to deal with simple commands and complex commands could help improve the result of the prediction. Also, the improvement can be observed in both the overall test set and the complex command test sets. We are planning to find whether we could introduce more complicated model so that the predictor can support more kind of structures that involving control flows, like loop or conditions.
 
 However, we still find that it is still hard to find a way to measure the accuracy of the output code. Finding a more efficient but sound test way is still a challenge in this area. 
 
