@@ -105,7 +105,7 @@ $$ L = L_{\mathrm{orignial}} + \omega \, L^s(\alpha, \mathbf{p})$$
 
 To experiment, we construct two tests set to evaluate the performance of the model. One of them is the original test set provided by NL2Bash, and the other one is consist of commands that are all complex. To test the performance of each approach, we keep the remaining hyperparameters in the model to be the same ones as the baseline model.
 
-The metrics we used are Template Matching score \(TM\), which is the coverage of the overlapping tokens between the ground truth and the predictions, and BLEU score, which is widely used in machine translation model.  Also, since we use beam search to find multiple predictions, we use superscript $k$ to indicate the best score could be achieved if considering the top $k$ predictions from the models.
+The metrics we used are Template Matching score \(TM\), which is the coverage of the overlapping tokens between the ground truth and the predictions, and [BLEU score](https://dl.acm.org/citation.cfm?id=1073135) , which is widely used in machine translation model.  Also, since we use beam search to find multiple predictions, we use superscript $k$ to indicate the best score could be achieved if considering the top $k$ predictions from the models.
 
 The following tables show the evaluation results for two values on two test sets. 
 
@@ -139,7 +139,7 @@ Meanwhile, the experiment results also show that adding semantic loss hurts the 
 # Error Analysis
 We also analyze the prediction from the results of our approaches to finding whether our model has better performance in generating complex commands. We selected some typical results to demonstrate the comparison between the baseline model and the output from the best model.
  
-Firstly, the following table is an example of generating complex codes. In this example, the model using TypeSelector have predicted three executable codes and the first prediction is very similar to the ground truth. Although the first prediction is to print one line with 10 `x`, it can be easily fixed by removing `tr -d '\n'`. On the other hand, the baseline model failed to output commands that can print something.
+Firstly, the following table is an example of generating complex codes. In this example, the model using TypeSelector have predicted three executable codes and the first prediction is very similar to the ground truth. Although it will to print one line with 10 `x`, the code can be easily fixed by removing `tr -d '\n'`. On the other hand, the baseline model failed to output commands that can print something. The results of the baseline model involve the action to print 10 lines, but fail to generate code to print `x`.
 
 <table>
   <tr>
@@ -185,7 +185,8 @@ seq 10 | xargs -I {} head -n 10 {}
 </table>
 
 
-The following table is another result comparing predictions between baseline model and TypeSelector. In this example, we find that the all three predictions from baseline model are commands use `find` only. Meanwhile, all the predictions from the model using TypeSelector contain pipeline, which is near the ground-truth code. However, this example shows that both the baseline model and the one using TypeSelector cannot always capture all infromation at the same time. All predictions from both models do not contain inforamation about 50KB and searching in the sub-directories at the same time. Notice that the first prediction from the model using TypeSelector capture `50` but misinterpret it as less than 50 mininutes. 
+The following table is another result comparing predictions between baseline model and the model using TypeSelector. In this example, we find that the all three predictions from baseline model are commands use `find` only. Meanwhile, all the predictions from the model using TypeSelector contain pipeline, which is near the ground-truth code. However, this example shows that both the baseline model and the one using TypeSelector cannot always capture all infromation at the same time. All predictions from both models do not contain inforamation about 50KB and searching in the sub-directories at the same time. Notice that the first prediction from the model using TypeSelector capture "50" from the description but misinterpret it as less than 50 mininutes. 
+
 <table>
   <tr>
 <td style="tet-align: center"> <em>Directions</em> </td>
@@ -237,9 +238,11 @@ In conclusion, our contributions are:
 1. collecting corpus to customize pre-trained embedding model,
 2. adding typer-selector to enable model to predict complex structure.
 
-We find that using a simple classifier to deal with simple commands and complex commands could help improve the result of the prediction. Also, the improvement can be observed in both the overall test set and the complex command test sets. We are planning to find whether we could introduce more complicated model so that the predictor can support more kind of structures that involving control flows, like loop or conditions.
+We find that using a simple classifier to deal with simple commands and complex commands could help improve the result of the prediction. Also, the improvement can be observed in both the overall test set and the complex command test sets. However, we still find the model using Seq2Seq are not able to extract all information when the description is long. We will try to solve this problem by adapting Seq2Tree models to use Seq2Seq model for predicting fragments of codes.
 
-However, we still find that it is still hard to find a way to measure the accuracy of the output code. Finding a more efficient but sound test way is still a challenge in this area. 
+Also, we are planning to find whether we could introduce more complicated model so that the predictor can support more kind of structures that involving control flows, like loop or conditions.
+
+What is more, we still find that it is still hard to find a way to measure the accuracy of the output code. Finding a more efficient but sound test way is still a challenge in this area.  
 
 [^zen]: [http://www.catb.org/~esr/writings/unix-koans/ten-thousand.html](http://www.catb.org/~esr/writings/unix-koans/ten-thousand.html)
 
