@@ -113,8 +113,8 @@ The following tables show the evaluation results for two values on two test sets
 
 | Model (Approach) | TM<sup>1</sup> | BLEU<sup>1</sup> | TM<sup>3</sup> | BLEU<sup>3</sup> |
 |------------------|----------------|------------------|----------------|------------------|
-| TypeSelector     | **0.521**      | **0.451**        | **0.634**      | 0.537            |
-| Pre-trained      | 0.519          | 0.445            | 0.616          | **0.549**        |
+| TypeSelector     | **0.521**      | **0.451**        | **0.634**      | **0.537**        |
+| Pre-trained      | 0.519          | 0.445            | 0.616          | 0.529            |
 | Semantic-Loss    | 0.444          | 0.375            | 0.525          | 0.477            |
 | Baseline         | 0.505          | 0.429            | 0.596          | 0.514            |
 
