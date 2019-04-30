@@ -115,7 +115,7 @@ The following tables show the evaluation results for two values on two test sets
 
 | Model (Approach) | TM<sup>1</sup> | BLEU<sup>1</sup> | TM<sup>3</sup> | BLEU<sup>3</sup> |
 |:----------------:|:--------------:|:----------------:|:--------------:|:----------------:|
-| TypeSelector     | **0.625**      | **0.563**        | **0.707**      | **0.638**        |
+| TypeSelector     | **0.621**      | **0.560**        | **0.691**      | **0.626**        |
 | Pre-trained      | 0.566          | 0.497            | 0.633          | 0.570            |
 | Semantic-Loss    | 0.541          | 0.475            | 0.605          | 0.542            |
 | Baseline         | 0.601          | 0.543            | 0.676          | 0.619            |
@@ -126,18 +126,19 @@ The following tables show the evaluation results for two values on two test sets
 
 | Model (Approach) | TM<sup>1</sup> | BLEU<sup>1</sup> | TM<sup>3</sup> | BLEU<sup>3</sup> |
 |:----------------:|:--------------:|:----------------:|:--------------:|:----------------:|
-| TypeSelector     | **0.521**      | **0.451**        | **0.634**      | **0.537**        |
-| Pre-trained      | 0.519          | 0.445            | 0.616          | 0.529            |
+| TypeSelector     | **0.530**      | **0.453**        | 0.593          | 0.516            |
+| Pre-trained      | 0.519          | 0.445            | **0.616**      | **0.529**        |
 | Semantic-Loss    | 0.444          | 0.375            | 0.525          | 0.477            |
 | Baseline         | 0.505          | 0.429            | 0.596          | 0.514            |
 
-In this result, we find that TypeSelector improves the performance of the model in both the test-set mixing simple commands and complex commands and the one with complex commands only. The model using pre-trained dictionary has better performace than the baseline model in the complex-commands test set but failed to achieve better performance in the original test set. 
+In this result, we find that TypeSelector improves the performance of the model in the test-set mixing simple commands and complex commands and the one with complex commands if we consider the top-1 output only. 
+The model using pre-trained dictionary has better performace than the baseline model in the complex-commands test set and perform better then TypeSelector when we consider top-3 output on the complex-command-only test set. However, this model failed to achieve better performance in the original test set. 
 
 Meanwhile, the experiment results also show that adding semantic loss hurts the performance a little bit. Thus, we do not combine this method to the final-stage model. The results also agree with the orignial paper that semantic loss is more suitable for the semi-supervised scene and is not good at the full-supervised scene since semantic loss combat the standard sigmoid cross entropy loss.
 
 # Error Analysis
-We also analyze the prediction from the results of our approaches to finding whether our model has better performance in generating complex commands. We selected some typical results to demonstrate the comparison between the baseline model and the output from the best model. 
-
+We also analyze the prediction from the results of our approaches to finding whether our model has better performance in generating complex commands. We selected some typical results to demonstrate the comparison between the baseline model and the output from the best model.
+ 
 Firstly, the following table shows the model predictions over the task we mentioned in the section of the baseline model. In this example, we see that all three predictions from the baseline failed to output a prediction that having the correct results. However, in the model using TypeSelector, all three predictions use pipeline and figure out to filter out the correct candidates by calling `grep`.
 
 <table>
