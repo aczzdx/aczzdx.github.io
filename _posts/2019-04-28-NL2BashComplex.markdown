@@ -139,88 +139,95 @@ Meanwhile, the experiment results also show that adding semantic loss hurts the 
 # Error Analysis
 We also analyze the prediction from the results of our approaches to finding whether our model has better performance in generating complex commands. We selected some typical results to demonstrate the comparison between the baseline model and the output from the best model.
  
-Firstly, the following table shows the model predictions over the task we mentioned in the section of the baseline model. In this example, we see that all three predictions from the baseline failed to output a prediction that having the correct results. However, in the model using TypeSelector, all three predictions use pipeline and figure out to filter out the correct candidates by calling `grep`.
+Firstly, the following table is an example of generating complex codes. In this example, the model using TypeSelector have predicted three executable codes and the first prediction is very similar to the ground truth. Although the first prediction is to print one line with 10 `x`, it can be easily fixed by removing `tr -d '\n'`. On the other hand, the baseline model failed to output commands that can print something.
 
 <table>
   <tr>
 <td style="text-align: center"> <em>Directions</em> </td>
-<td>Find all .js files in the $d directory tree whose pathnames do not contain whitespaces</td>
-</tr>
-  <tr>
-    <td style="text-align: center"><em>Ground Truth</em></td>
-    <td><code>find $d -name ’*.js’ | grep-v " " </code></td>
-  </tr>
-  <tr>
-    <td style="text-align: center" rowspan="3"><em>TypeSelector Results</em></td>
-    <td style="text-align: left">
-        <code>find $d -name ’*.js’ | grep -v whitespaces</code> </td>
-  </tr>
-  <tr>
-  <td>
-  <code>
-    find $d -name ’*.js’ | xargs -I {} grep ’whitespaces’ {}<br/>
-    </code>
-    </td>
-  </tr>
-  <tr><td>  <code>find $d -name ’*.js’ | grep -v ’whitespaces’</code> </td></tr>
-  <tr>
-    <td style="text-align: center" rowspan="3"><em>Baseline Results</em></td>
-    <td style="text-align: left"><code class="language-{bash}" style="text-align: left">
-    find "$d" -name "*.js" !  -path "$d" -prune -or -name "*.js"
-    </code>
-    </td></tr>
-  <tr><td><code>
-    find "$d" -name "*.js" !  -path "$d" -prune -or -name "*.js"
-  </code></td></tr>
-    <tr><td><code>
-    find "$d" -name "*.js" !  -path "$d" -prune -or -name ’*.js<br/>
-    </code></td></tr>
-  
-</table>
-
-The following table is another example of generating complex codes. In this example, the model using TypeSelector have all its top-3 predictions using pipeline and have the same correct output. On the other hand, although the baseline model is able to predict the correct code, the model does not prioritize the correct result as the top-1 prediction, and the other two predictions in top-3 predictions is not executable. 
-
-<table>
-  <tr>
-<td style="text-align: center"> <em>Directions</em> </td>
-<td> Print 2 lines of "123456789".</td>
+<td> Print 10 lines of "x".</td>
 </tr>
   <tr>
     <td style="text-align: center"><em>Ground Truth</em></td>
     <td><code>
-        yes 123456789 | head -2
+        yes x | head -n 10
     </code></td>
   </tr>
   <tr>
     <td style="text-align: center" rowspan="3"><em>TypeSelector Results</em></td>
     <td style="text-align: left">
         <code>
-        yes 123456789 | head -n 2
+        yes 'x' | head -n 10 | tr -d '\n'
         </code> </td>
   </tr>
   <tr>
   <td>
   <code>
-    yes "123456789" | head -n 2
+  x | head -n 10
     </code>
     </td>
   </tr>
   <tr><td>  <code>
-    yes ’123456789’ | head -n 2
+  echo 'x' | head -n 10 | tr -d '\n'
   </code> </td></tr>
   <tr>
     <td style="text-align: center" rowspan="3"><em>Baseline Results</em></td>
     <td style="text-align: left"><code class="language-{bash}" style="text-align: left">
-tail -n +2 123456789 | head -n 2 
+seq 10 | paste -s -d ' '
     </code>
     </td></tr>
   <tr><td><code>
-yes 123456789 | head -n 2 
+head -n 10 | tr '\n' '\n'
   </code></td></tr>
     <tr><td><code>
-tail -n +2 123456789 | head - 2 
+seq 10 | xargs -I {} head -n 10 {} 
     </code></td></tr>
   
+</table>
+
+
+The following table is another result comparing predictions between baseline model and TypeSelector. In this example, we find that the all three predictions from baseline model are commands use `find` only. Meanwhile, all the predictions from the model using TypeSelector contain pipeline, which is near the ground-truth code. However, this example shows that both the baseline model and the one using TypeSelector cannot always capture all infromation at the same time. All predictions from both models do not contain inforamation about 50KB and searching in the sub-directories at the same time. Notice that the first prediction from the model using TypeSelector capture `50` but misinterpret it as less than 50 mininutes. 
+<table>
+  <tr>
+<td style="tet-align: center"> <em>Directions</em> </td>
+<td>
+ Force delete all jpg files in current directory which are less than 50KB and do not search in the sub directories
+</td>
+</tr>
+  <tr>
+    <td style="text-align: center"><em>Ground Truth</em></td>
+    <td><code>
+    find . -maxdepth 1 -name "*.jpg" -size -50k | xargs rm -f
+    </code></td>
+  </tr>
+  <tr>
+    <td style="text-align: center" rowspan="3"><em>TypeSelector Results</em></td>
+    <td style="text-align: left">
+        <code>
+find . -mindepth 1 -mmin -50 -name "*.jpg" | xargs -I {} rm {} 
+        </code> </td>
+  </tr>
+  <tr>
+  <td>
+  <code>
+find . -mindepth 1 -maxdepth 1 -type f | xargs -I {} rm {} 
+    </code>
+    </td>
+  </tr>
+  <tr><td>  <code>
+ find . -mindepth 1 -maxdepth 1 -type f | xargs -I {} rm -f {}
+  </code> </td></tr>
+  <tr>
+    <td style="text-align: center" rowspan="3"><em>Baseline Results</em></td>
+    <td style="text-align: left"><code class="language-{bash}" style="text-align: left">
+find . -name "*.jpg" -size -50k -exec rm {} \; 
+    </code>
+    </td></tr>
+  <tr><td><code>
+find . -name '*.jpg' -size -50k -exec rm {} \; 
+  </code></td></tr>
+    <tr><td><code>
+find . -name "*.jpg" -maxdepth 1 -exec rm {} \; 
+    </code></td></tr>
 </table>
 
 
