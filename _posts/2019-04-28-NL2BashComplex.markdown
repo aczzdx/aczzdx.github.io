@@ -93,7 +93,7 @@ We also tried to modify a general text-to-code model, [TRANX](https://github.com
 
 # Yet Another Step to Improve: Add Semantic Loss
 
-The intuition to try to add semantic loss is inspired by [Variational Autoencoder(VAE)](https://arxiv.org/abs/1312.6114). VAE adds an additional latent loss to constrain the model’s latent variables’ distribution. It makes us consider adding a regularization item. [Semantic loss](http://web.cs.ucla.edu/~guyvdb/papers/XuICML18.pdf) is a good possible add-on. Its design intention is to capture logical constraints and structured predictions, like one-hot constraint when encoding in addition to standard sigmoid cross entropy. Semantic loss can be formualated as the following.
+Adding semantic loss is inspired by [Variational Autoencoder(VAE)](https://arxiv.org/abs/1312.6114). VAE adds an additional latent loss to constrain the model’s latent variables’ distribution. It makes us consider adding a regularization item. [Semantic loss](http://web.cs.ucla.edu/~guyvdb/papers/XuICML18.pdf) is a good possible add-on. Its design intention is to capture logical constraints and structured predictions, like one-hot constraint when encoding in addition to standard sigmoid cross entropy. Semantic loss can be formualated as the following.
 
 $$L^s (\alpha, \mathbf{p}) \propto - \log \sum_{x \models \alpha} \prod_{i: \mathbf{x} \models X_i} p_i \prod_{i: x \models \neg X_i} (1 - p_i)$$
 
