@@ -16,7 +16,7 @@ The problem we are going to solve is like machine translation: given a task desc
 
 <center><em>Illustration of an example in the dataset</em></center>
 
-![Example of the problem ](/images/example.png)
+![Example of the problem in NL2Bash](/images/example.png)
 
 Lin et al. collected an open-source dataset, [NL2Bash](https://github.com/TellinaTool/nl2bash),  with more than ten thousand manually verified (Natural language, Bash Scripts) pairs. They also provide state-of-the-art prediction model.
 
@@ -47,8 +47,21 @@ find "$d" -name "*.js" !  -path "$d" -prune -or -name "*.js"
 
 which just output code can find all js files in the given directory with no filter. We find that the output code is using `-prune` flag to exclude something, but it seems that it does not match the requirement of the task description. 
 
-In summary, it seems that the baseline model is suffering from long task description or involving complicated bash script grammar. Thus, here we define the commands calling only one utility as **simple commands** while the others are **complex commands**. 
-And we are trying to improve the model to perform better, especially when the output should be a complex command.
+In summary, it seems that the baseline model is suffering from long task description or involving complicated bash script grammar. Thus, we define the commands calling only one utility as **simple commands** while the others are **complex commands**. And we are trying to improve the model to perform better, especially when the output should be a complex command.
+
+<center><em> Examples of simple commands and complex commands </em></center>
+
+<table>
+  <tr>
+    <th style="text-align center">Simple</th>
+    <td style="text-align center"><code>rm -f foo.txt</code></td>
+  </tr>
+  <tr>
+    <th style="text-align center">Complex</th>
+    <td style="text-align center">
+    <code>yes x | head -n 10</code></td>
+  </tr>
+</table>
 
 
 
@@ -101,7 +114,7 @@ The following tables show the evaluation results for two values on two test sets
 <center><em>Evaluation result on the test set provided by NL2Bash</em></center>
 
 | Model (Approach) | TM<sup>1</sup> | BLEU<sup>1</sup> | TM<sup>3</sup> | BLEU<sup>3</sup> |
-|------------------|----------------|------------------|----------------|------------------|
+|:----------------:|:--------------:|:----------------:|:--------------:|:----------------:|
 | TypeSelector     | **0.625**      | **0.563**        | **0.707**      | **0.638**        |
 | Pre-trained      | 0.566          | 0.497            | 0.633          | 0.570            |
 | Semantic-Loss    | 0.541          | 0.475            | 0.605          | 0.542            |
@@ -112,7 +125,7 @@ The following tables show the evaluation results for two values on two test sets
 <center><em>Evaluation result on the test set with complex commands only</em></center>
 
 | Model (Approach) | TM<sup>1</sup> | BLEU<sup>1</sup> | TM<sup>3</sup> | BLEU<sup>3</sup> |
-|------------------|----------------|------------------|----------------|------------------|
+|:----------------:|:--------------:|:----------------:|:--------------:|:----------------:|
 | TypeSelector     | **0.521**      | **0.451**        | **0.634**      | **0.537**        |
 | Pre-trained      | 0.519          | 0.445            | 0.616          | 0.529            |
 | Semantic-Loss    | 0.444          | 0.375            | 0.525          | 0.477            |
