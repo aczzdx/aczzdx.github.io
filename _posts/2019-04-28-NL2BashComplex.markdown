@@ -211,7 +211,6 @@ seq 10 | xargs -I {} head -n 10 {}
   
 </table>
 
-
 The following table is another result comparing predictions between baseline model and the model using TypeSelector. In this example, we find that the all three predictions from baseline model are scripts use `find` only. Meanwhile, all the predictions from the model using TypeSelector contain pipeline, which is near the ground-truth code. However, this example shows that both the baseline model and the one using TypeSelector cannot always capture all infromation at the same time. All predictions from both models do not contain inforamation about 50KB and searching in the sub-directories at the same time. Notice that the first prediction from the model using TypeSelector capture "50" from the description but misinterpret it as less than 50 mininutes. 
 
 <table>
