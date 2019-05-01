@@ -2,9 +2,10 @@
 #
 
 # Setup
-title:               NL2Bash-Complex
+title:               NL2Bash++
 tagline:             "Synthesis Complex Bash Scripts from Natural Language"
 baseurl:             'https://aczzdx.github.io'
+# baseurl: ""
 paginate:            5
 
 # About/contact
