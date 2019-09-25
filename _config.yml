@@ -2,8 +2,7 @@
 #
 
 # Setup
-title:               NL2Bash++
-tagline:             "Synthesis Complex Bash Scripts from Natural Language"
+title:               "The quick brown dog jumps over the lazy fox"
 baseurl:             'https://aczzdx.github.io'
 # baseurl: ""
 paginate:            5
@@ -18,4 +17,6 @@ version:             1.0.0
 
 
 # plugins
-plugins: [jekyll-paginate]
+plugins:
+  - jekyll-paginate
+  - jemoji
